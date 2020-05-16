@@ -562,7 +562,7 @@ L Device:R R6
 U 1 1 5E9FA6B6
 P 4100 6950
 F 0 "R6" H 4030 6904 50  0000 R CNN
-F 1 "1k" H 4030 6995 50  0000 R CNN
+F 1 "680" H 4030 6995 50  0000 R CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 4030 6950 50  0001 C CNN
 F 3 "~" H 4100 6950 50  0001 C CNN
 	1    4100 6950
@@ -579,8 +579,6 @@ F 3 "" H 4800 6100 50  0001 C CNN
 	1    4800 6100
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3950 6700 4100 6700
 Text GLabel 3600 4050 0    50   Input ~ 0
 RX
 Text GLabel 3600 4150 0    50   Input ~ 0
@@ -623,14 +621,12 @@ Wire Wire Line
 	3850 4350 3600 4350
 Wire Wire Line
 	3600 4450 3850 4450
-Text GLabel 3950 6700 0    50   Input ~ 0
-DTR
 $Comp
 L Device:C C4
 U 1 1 5EA3CBA1
 P 4400 6700
 F 0 "C4" H 4515 6746 50  0000 L CNN
-F 1 "0.1u" H 4515 6655 50  0000 L CNN
+F 1 "2.2u" H 4515 6655 50  0000 L CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 4438 6550 50  0001 C CNN
 F 3 "~" H 4400 6700 50  0001 C CNN
 	1    4400 6700
@@ -647,47 +643,17 @@ F 3 "" H 4100 7200 50  0001 C CNN
 	1    4100 7200
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4100 6800 4100 6700
-Wire Wire Line
-	4100 6700 4250 6700
-Connection ~ 4100 6700
-Wire Wire Line
-	4550 6700 4700 6700
 $Comp
 L Device:R R7
 U 1 1 5EA6DF53
 P 4700 6450
 F 0 "R7" H 4630 6404 50  0000 R CNN
-F 1 "1k" H 4630 6495 50  0000 R CNN
+F 1 "10k" H 4630 6495 50  0000 R CNN
 F 2 "Resistor_SMD:R_0603_1608Metric" V 4630 6450 50  0001 C CNN
 F 3 "~" H 4700 6450 50  0001 C CNN
 	1    4700 6450
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	4700 6600 4700 6700
-Connection ~ 4700 6700
-Wire Wire Line
-	4100 7100 4100 7200
-Wire Wire Line
-	4800 6100 4800 6200
-Wire Wire Line
-	4700 6300 4700 6200
-Wire Wire Line
-	4700 6200 4800 6200
-Wire Wire Line
-	4900 6300 4900 6200
-Wire Wire Line
-	4900 6200 4800 6200
-Connection ~ 4800 6200
-Wire Wire Line
-	4700 6700 4900 6700
-Wire Wire Line
-	4900 6600 4900 6700
-Connection ~ 4900 6700
-Wire Wire Line
-	4900 6700 5050 6700
 $Comp
 L Device:D D2
 U 1 1 5EA82BBA
@@ -710,8 +676,6 @@ F 3 "https://www.fairchildsemi.com/datasheets/2N/2N3904.pdf" H 1650 5850 50  000
 	1    1650 5850
 	1    0    0    -1  
 $EndComp
-Text GLabel 1150 5850 0    50   Input ~ 0
-CTS
 $Comp
 L power:+3.3V #PWR0124
 U 1 1 5EAD30D6
@@ -808,7 +772,7 @@ U 1 1 5ECA325F
 P 6250 4700
 F 0 "TP3" H 6330 4742 50  0000 L CNN
 F 1 "Conn_01x01" H 6330 4651 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 6250 4700 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6250 4700 50  0001 C CNN
 F 3 "~" H 6250 4700 50  0001 C CNN
 	1    6250 4700
 	1    0    0    -1  
@@ -819,7 +783,7 @@ U 1 1 5ECBD1A2
 P 4900 7000
 F 0 "TP2" V 4772 7080 50  0000 L CNN
 F 1 "Conn_01x01" V 4863 7080 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 4900 7000 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 4900 7000 50  0001 C CNN
 F 3 "~" H 4900 7000 50  0001 C CNN
 	1    4900 7000
 	0    1    1    0   
@@ -830,7 +794,7 @@ U 1 1 5ECC22D7
 P 2050 5200
 F 0 "TP1" V 2014 5112 50  0000 R CNN
 F 1 "Conn_01x01" V 1923 5112 50  0000 R CNN
-F 2 "TestPoint:TestPoint_Pad_D1.0mm" H 2050 5200 50  0001 C CNN
+F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 2050 5200 50  0001 C CNN
 F 3 "~" H 2050 5200 50  0001 C CNN
 	1    2050 5200
 	0    -1   -1   0   
@@ -842,8 +806,6 @@ Wire Wire Line
 Wire Wire Line
 	2050 5500 2200 5500
 Connection ~ 2050 5500
-Wire Wire Line
-	4900 6800 4900 6700
 Text GLabel 5900 4700 0    50   Input ~ 0
 SERVO
 Text GLabel 6400 3250 2    50   Input ~ 0
@@ -852,4 +814,42 @@ Wire Wire Line
 	5900 4700 6050 4700
 Wire Wire Line
 	6100 3250 6400 3250
+Wire Wire Line
+	4900 6300 4900 6200
+Wire Wire Line
+	4700 6300 4700 6200
+Wire Wire Line
+	4900 6200 4800 6200
+Wire Wire Line
+	4700 6200 4800 6200
+Connection ~ 4800 6200
+Wire Wire Line
+	4800 6100 4800 6200
+Wire Wire Line
+	4900 6800 4900 6700
+Wire Wire Line
+	4900 6700 5050 6700
+Connection ~ 4900 6700
+Wire Wire Line
+	4900 6600 4900 6700
+Wire Wire Line
+	4700 6700 4900 6700
+Wire Wire Line
+	4700 6600 4700 6700
+Connection ~ 4700 6700
+Wire Wire Line
+	4550 6700 4700 6700
+Wire Wire Line
+	4100 7100 4100 7200
+Wire Wire Line
+	4100 6700 4250 6700
+Wire Wire Line
+	4100 6800 4100 6700
+Connection ~ 4100 6700
+Wire Wire Line
+	3950 6700 4100 6700
+Text GLabel 1150 5850 0    50   Input ~ 0
+CTS
+Text GLabel 3950 6700 0    50   Input ~ 0
+CTS
 $EndSCHEMATC
