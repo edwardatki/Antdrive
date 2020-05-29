@@ -271,13 +271,13 @@ Connection ~ 7800 1950
 Wire Wire Line
 	8800 3500 7700 3500
 Connection ~ 8800 3500
-Text GLabel 6400 2550 2    50   Input ~ 0
+Text GLabel 6400 3150 2    50   Input ~ 0
 AIN1
-Text GLabel 6400 2650 2    50   Input ~ 0
-AIN2
-Text GLabel 6400 2850 2    50   Input ~ 0
-BIN1
 Text GLabel 6400 2750 2    50   Input ~ 0
+AIN2
+Text GLabel 6400 3250 2    50   Input ~ 0
+BIN1
+Text GLabel 6400 2850 2    50   Input ~ 0
 BIN2
 Text GLabel 7700 2600 0    50   Input ~ 0
 !SLEEP
@@ -464,45 +464,32 @@ $EndComp
 $Comp
 L Connector_Generic:Conn_01x03 J2
 U 1 1 5EB140A1
-P 7150 4050
-F 0 "J2" H 7230 4092 50  0000 L CNN
-F 1 "Conn_01x03" H 7230 4001 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 7150 4050 50  0001 C CNN
-F 3 "~" H 7150 4050 50  0001 C CNN
-	1    7150 4050
+P 10300 4300
+F 0 "J2" H 10380 4342 50  0000 L CNN
+F 1 "Conn_01x03" H 10380 4251 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 10300 4300 50  0001 C CNN
+F 3 "~" H 10300 4300 50  0001 C CNN
+	1    10300 4300
 	1    0    0    1   
 $EndComp
-Text GLabel 6750 3950 0    50   Input ~ 0
+Text GLabel 9900 4200 0    50   Input ~ 0
 PPM
 $Comp
 L power:GND #PWR0105
 U 1 1 5EB18EEF
-P 6750 4150
-F 0 "#PWR0105" H 6750 3900 50  0001 C CNN
-F 1 "GND" H 6755 3977 50  0000 C CNN
-F 2 "" H 6750 4150 50  0001 C CNN
-F 3 "" H 6750 4150 50  0001 C CNN
-	1    6750 4150
+P 9900 4400
+F 0 "#PWR0105" H 9900 4150 50  0001 C CNN
+F 1 "GND" H 9905 4227 50  0000 C CNN
+F 2 "" H 9900 4400 50  0001 C CNN
+F 3 "" H 9900 4400 50  0001 C CNN
+	1    9900 4400
 	0    1    1    0   
 $EndComp
-$Comp
-L power:+3.3V #PWR0120
-U 1 1 5EB1B142
-P 6750 4050
-F 0 "#PWR0120" H 6750 3900 50  0001 C CNN
-F 1 "+3.3V" H 6765 4223 50  0000 C CNN
-F 2 "" H 6750 4050 50  0001 C CNN
-F 3 "" H 6750 4050 50  0001 C CNN
-	1    6750 4050
-	0    -1   -1   0   
-$EndComp
 Wire Wire Line
-	6750 3950 6950 3950
+	9900 4200 10100 4200
 Wire Wire Line
-	6750 4050 6950 4050
-Wire Wire Line
-	6750 4150 6950 4150
-Text GLabel 6400 3550 2    50   Input ~ 0
+	9900 4400 10100 4400
+Text GLabel 4800 3650 0    50   Input ~ 0
 PPM
 $Comp
 L Device:LED D1
@@ -547,7 +534,7 @@ Wire Wire Line
 	6200 5350 6200 5250
 Wire Wire Line
 	6200 5250 6100 5250
-Text GLabel 6400 3150 2    50   Input ~ 0
+Text GLabel 6400 2550 2    50   Input ~ 0
 LED
 Wire Wire Line
 	6400 3150 6100 3150
@@ -744,7 +731,7 @@ Connection ~ 1750 4900
 Wire Wire Line
 	1300 5350 1300 5850
 Wire Wire Line
-	6400 3550 6100 3550
+	4800 3650 5100 3650
 Text GLabel 6400 3350 2    50   Input ~ 0
 RX
 Text GLabel 6400 3450 2    50   Input ~ 0
@@ -765,17 +752,6 @@ F 2 "Connector_PinSocket_2.54mm:PinSocket_1x06_P2.54mm_Vertical" H 4050 4250 50 
 F 3 "~" H 4050 4250 50  0001 C CNN
 	1    4050 4250
 	1    0    0    1   
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x01 TP3
-U 1 1 5ECA325F
-P 6250 4700
-F 0 "TP3" H 6330 4742 50  0000 L CNN
-F 1 "Conn_01x01" H 6330 4651 50  0000 L CNN
-F 2 "TestPoint:TestPoint_Pad_D2.0mm" H 6250 4700 50  0001 C CNN
-F 3 "~" H 6250 4700 50  0001 C CNN
-	1    6250 4700
-	1    0    0    -1  
 $EndComp
 $Comp
 L Connector_Generic:Conn_01x01 TP2
@@ -806,12 +782,10 @@ Wire Wire Line
 Wire Wire Line
 	2050 5500 2200 5500
 Connection ~ 2050 5500
-Text GLabel 5900 4700 0    50   Input ~ 0
+Text GLabel 10600 5100 0    50   Input ~ 0
 SERVO
-Text GLabel 6400 3250 2    50   Input ~ 0
+Text GLabel 6400 2650 2    50   Input ~ 0
 SERVO
-Wire Wire Line
-	5900 4700 6050 4700
 Wire Wire Line
 	6100 3250 6400 3250
 Wire Wire Line
@@ -852,4 +826,158 @@ Text GLabel 1150 5850 0    50   Input ~ 0
 CTS
 Text GLabel 3950 6700 0    50   Input ~ 0
 CTS
+$Comp
+L Connector_Generic:Conn_01x03 J?
+U 1 1 5ED449AB
+P 11000 5200
+F 0 "J?" H 11080 5242 50  0000 L CNN
+F 1 "Conn_01x03" H 11080 5151 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical" H 11000 5200 50  0001 C CNN
+F 3 "~" H 11000 5200 50  0001 C CNN
+	1    11000 5200
+	1    0    0    1   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5ED449B2
+P 10600 5300
+F 0 "#PWR?" H 10600 5050 50  0001 C CNN
+F 1 "GND" H 10605 5127 50  0000 C CNN
+F 2 "" H 10600 5300 50  0001 C CNN
+F 3 "" H 10600 5300 50  0001 C CNN
+	1    10600 5300
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	10600 5300 10800 5300
+Wire Wire Line
+	10600 5100 10800 5100
+$Comp
+L power:GND #PWR?
+U 1 1 5ED660A0
+P 3450 1750
+F 0 "#PWR?" H 3450 1500 50  0001 C CNN
+F 1 "GND" H 3455 1577 50  0000 C CNN
+F 2 "" H 3450 1750 50  0001 C CNN
+F 3 "" H 3450 1750 50  0001 C CNN
+	1    3450 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3450 1750 3450 1700
+Wire Wire Line
+	3750 1400 3800 1400
+$Comp
+L power:+BATT #PWR?
+U 1 1 5ED660A8
+P 3100 1400
+F 0 "#PWR?" H 3100 1250 50  0001 C CNN
+F 1 "+BATT" V 3115 1527 50  0000 L CNN
+F 2 "" H 3100 1400 50  0001 C CNN
+F 3 "" H 3100 1400 50  0001 C CNN
+	1    3100 1400
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3100 1400 3150 1400
+$Comp
+L Regulator_Linear:HT75xx-1-SOT89 U?
+U 1 1 5ED660AF
+P 3450 1500
+F 0 "U?" H 3450 1867 50  0000 C CNN
+F 1 "HT75xx-1-SOT89" H 3450 1776 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-89-3" H 3450 1825 50  0001 C CIN
+F 3 "https://www.holtek.com/documents/10179/116711/HT75xx-1v250.pdf" H 3450 1600 50  0001 C CNN
+	1    3450 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5ED6A02B
+P 3800 1400
+F 0 "#PWR?" H 3800 1250 50  0001 C CNN
+F 1 "+5V" V 3815 1528 50  0000 L CNN
+F 2 "" H 3800 1400 50  0001 C CNN
+F 3 "" H 3800 1400 50  0001 C CNN
+	1    3800 1400
+	0    1    1    0   
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5ED6D4C0
+P 10200 5500
+F 0 "#PWR?" H 10200 5350 50  0001 C CNN
+F 1 "+5V" V 10215 5628 50  0000 L CNN
+F 2 "" H 10200 5500 50  0001 C CNN
+F 3 "" H 10200 5500 50  0001 C CNN
+	1    10200 5500
+	-1   0    0    1   
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5ED75BAD
+P 9500 4600
+F 0 "#PWR?" H 9500 4450 50  0001 C CNN
+F 1 "+5V" V 9515 4728 50  0000 L CNN
+F 2 "" H 9500 4600 50  0001 C CNN
+F 3 "" H 9500 4600 50  0001 C CNN
+	1    9500 4600
+	-1   0    0    1   
+$EndComp
+$Comp
+L Jumper:SolderJumper_3_Open JP?
+U 1 1 5ED7D973
+P 9500 4300
+F 0 "JP?" H 9500 4505 50  0000 C CNN
+F 1 "SolderJumper_3_Open" H 9500 4414 50  0000 C CNN
+F 2 "" H 9500 4300 50  0001 C CNN
+F 3 "~" H 9500 4300 50  0001 C CNN
+	1    9500 4300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	9650 4300 10100 4300
+$Comp
+L Jumper:SolderJumper_3_Open JP?
+U 1 1 5ED8CE61
+P 10200 5200
+F 0 "JP?" H 10200 5405 50  0000 C CNN
+F 1 "SolderJumper_3_Open" H 10200 5314 50  0000 C CNN
+F 2 "" H 10200 5200 50  0001 C CNN
+F 3 "~" H 10200 5200 50  0001 C CNN
+	1    10200 5200
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	10350 5200 10800 5200
+$Comp
+L power:+BATT #PWR?
+U 1 1 5EDB1426
+P 9500 4000
+F 0 "#PWR?" H 9500 3850 50  0001 C CNN
+F 1 "+BATT" V 9515 4127 50  0000 L CNN
+F 2 "" H 9500 4000 50  0001 C CNN
+F 3 "" H 9500 4000 50  0001 C CNN
+	1    9500 4000
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+BATT #PWR?
+U 1 1 5EDB59A8
+P 10200 4900
+F 0 "#PWR?" H 10200 4750 50  0001 C CNN
+F 1 "+BATT" V 10215 5027 50  0000 L CNN
+F 2 "" H 10200 4900 50  0001 C CNN
+F 3 "" H 10200 4900 50  0001 C CNN
+	1    10200 4900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9500 4000 9500 4100
+Wire Wire Line
+	9500 4600 9500 4500
+Wire Wire Line
+	10200 5000 10200 4900
+Wire Wire Line
+	10200 5500 10200 5400
 $EndSCHEMATC
