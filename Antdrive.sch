@@ -531,9 +531,9 @@ Wire Wire Line
 Wire Wire Line
 	3550 4600 3550 4500
 Text GLabel 1600 4850 0    50   Input ~ 0
-CTS
+DTR
 Text GLabel 3450 4500 0    50   Input ~ 0
-CTS
+DTR
 Wire Wire Line
 	2150 5050 2150 5150
 Wire Wire Line
