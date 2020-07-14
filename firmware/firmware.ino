@@ -1,4 +1,3 @@
-//#include <EEPROM.h>
 #include <Servo.h>
 
 // Pin definintions
@@ -55,13 +54,23 @@ void ppmInterrupt (bool val) {
 }
 
 void pwmInterrupt (bool channel, bool val) {
-  static int startMicros [2];
-  
-  if (val) {
-    startMicros[channel] = micros();
+  static int startMicrosA = 0;
+  static int startMicrosB = 0;
+
+  if (channel == 0) {
+    if (val) {
+      startMicrosA = micros();
+    } else {
+      int duration = abs((int)micros() - startMicrosA);
+      channels[0] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
+    }
   } else {
-    int duration = abs((int)micros() - startMicros[channel]);
-    channels[channel] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
+    if (val) {
+      startMicrosB = micros();
+    } else {
+      int duration = abs((int)micros() - startMicrosB);
+      channels[1] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
+    }
   }
 }
 
@@ -115,14 +124,14 @@ void setup() {
   weapon.attach(SERVO_PIN, 1000, 2000);
   weapon.write(0);
 
-  /*int address = 0;
-  EEPROM.get(address, MIN_PULSE);
-  address += sizeof(int);
-  EEPROM.get(address, MAX_PULSE);*/
-
   // Set configuration varialbles from config jumpers
   INPUT_MODE = digitalRead(CFG1_PIN);
   MIXING = digitalRead(CFG2_PIN);
+
+  if (!INPUT_MODE) {
+    // Enable servo pin as input if in PWM mode
+    pinMode(SERVO_PIN, INPUT_PULLUP);
+  }
 
   // Flash LED to indicate ready
   digitalWrite(LED_PIN, HIGH);
@@ -138,6 +147,7 @@ void setup() {
 }
 
 void loop() {
+  bool haveUpdate = false;
   static int lastUpdate = 0;
   
   if (INPUT_MODE) {
@@ -152,15 +162,17 @@ void loop() {
       pwmInterrupt(0, newValA);
       lastUpdate = millis();
       lastValA = newValA;
+      haveUpdate = true;
     }
 
     // Check if PWM pin B has changed
-    bool newValB = digitalRead(PPM_PIN);
+    bool newValB = digitalRead(SERVO_PIN);
     if (newValB != lastValB) {
       // Update variables
       pwmInterrupt(1, newValB);
       lastUpdate = millis();
       lastValB = newValB;
+      haveUpdate = true;
     }
   } else {
     // PPM Mode
@@ -170,9 +182,10 @@ void loop() {
     bool newVal = digitalRead(PPM_PIN);
     if (newVal != lastVal) {
       // Update variables
-      ppmInterrupt(+newVal);
+      ppmInterrupt(newVal);
       lastUpdate = millis();
       lastVal = newVal;
+      haveUpdate = true;
     }
   }
 
@@ -189,10 +202,12 @@ void loop() {
     // Set motors to idle
     setMotor(0, 0);
     setMotor(1, 0);
-  
-    // Set weapon to ilde
-    weapon.write(0);
-  } else {
+
+    if (INPUT_MODE) {
+      // Set weapon to ilde
+      weapon.write(0);
+    }
+  } else if (haveUpdate) {
     // Still got signal so update motor and weapon outputs
     
     // Enable LED to indicate receiver connected
@@ -214,8 +229,10 @@ void loop() {
       setMotor(0, channels[0]);
       setMotor(1, channels[1]);
     }
-  
-    // Write throttle channel to servo pin for weapon
-    weapon.write(map(channels[2], -255, 255, 0, 180));
+
+    if (INPUT_MODE) {
+      // Write throttle channel to servo pin for weapon
+      weapon.write(map(channels[2], -255, 255, 0, 180));
+    }
   }
 }
