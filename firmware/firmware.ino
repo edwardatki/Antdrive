@@ -120,17 +120,17 @@ void setup() {
   setMotor(1, 0);
   digitalWrite(MOT_SLEEP_PIN, LOW);
 
-  // Attach weapon to pin and set to idle
-  weapon.attach(SERVO_PIN, 1000, 2000);
-  weapon.write(0);
-
   // Set configuration varialbles from config jumpers
   INPUT_MODE = digitalRead(CFG1_PIN);
   MIXING = digitalRead(CFG2_PIN);
 
-  if (!INPUT_MODE) {
+  if (INPUT_MODE) {
     // Enable servo pin as input if in PWM mode
     pinMode(SERVO_PIN, INPUT_PULLUP);
+  } else {
+    // Attach weapon to pin and set to idle
+    weapon.attach(SERVO_PIN, 1000, 2000);
+    weapon.write(0);
   }
 
   // Flash LED to indicate ready
@@ -203,7 +203,7 @@ void loop() {
     setMotor(0, 0);
     setMotor(1, 0);
 
-    if (INPUT_MODE) {
+    if (!INPUT_MODE) {
       // Set weapon to ilde
       weapon.write(0);
     }
@@ -230,7 +230,7 @@ void loop() {
       setMotor(1, channels[1]);
     }
 
-    if (INPUT_MODE) {
+    if (!INPUT_MODE) {
       // Write throttle channel to servo pin for weapon
       weapon.write(map(channels[2], -255, 255, 0, 180));
     }
