@@ -43,7 +43,7 @@ void ppmInterrupt (bool val) {
   if (val) {
     startMicros = micros();
   } else {
-    int duration = abs((int)micros() - startMicros);
+    int duration = constrain(abs((int)micros() - startMicros), PPM_MIN_PULSE, PPM_MAX_PULSE);
     if (duration > PPM_MIN_SYNC) {
       counter = 0;
     } else {
@@ -61,14 +61,14 @@ void pwmInterrupt (bool channel, bool val) {
     if (val) {
       startMicrosA = micros();
     } else {
-      int duration = abs((int)micros() - startMicrosA);
+      int duration = constrain(abs((int)micros() - startMicrosA), PWM_MIN_PULSE, PPM_MAX_PULSE);
       channels[0] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
     }
   } else {
     if (val) {
       startMicrosB = micros();
     } else {
-      int duration = abs((int)micros() - startMicrosB);
+      int duration = constrain(abs((int)micros() - startMicrosB), PWM_MIN_PULSE, PPM_MAX_PULSE);
       channels[1] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
     }
   }
