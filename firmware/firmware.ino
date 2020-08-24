@@ -39,14 +39,14 @@ void ppmInterrupt (bool val) {
   static char counter = 0;
   static int startMicros = 0;
   
-  //bool val = digitalRead(PPM_PIN);
   if (val) {
     startMicros = micros();
   } else {
-    int duration = constrain(abs((int)micros() - startMicros), PPM_MIN_PULSE, PPM_MAX_PULSE);
+    int duration = abs((int)micros() - startMicros);
     if (duration > PPM_MIN_SYNC) {
       counter = 0;
     } else {
+      duration =  constrain(duration, PPM_MIN_PULSE, PPM_MAX_PULSE);
       channels[counter] = map(duration, PPM_MIN_PULSE, PPM_MAX_PULSE, -255, 255);
       counter += 1;
     }
@@ -108,7 +108,7 @@ void setup() {
   //pinMode(MOT_2A_PIN, OUTPUT);
   pinMode(MOT_2B_PIN, OUTPUT);
   pinMode(MOT_SLEEP_PIN, OUTPUT);
-  pinMode(MOT_FAULT_PIN, INPUT_PULLUP);
+  pinMode(MOT_FAULT_PIN, INPUT);
   pinMode(LED_PIN, OUTPUT);
   //pinMode(SERVO_PIN, OUTPUT);
   pinMode(PPM_PIN, INPUT_PULLUP);
@@ -149,9 +149,23 @@ void setup() {
 void loop() {
   bool haveUpdate = false;
   static int lastUpdate = 0;
+
+  // Fault check disabled because it's always comes back positive
+  // Driver still operates so the problem is between driver and microcontrollerU
+  /*
+  // Check for motor driver fault
+  if (!digitalRead(MOT_FAULT_PIN)) {
+    // If fault detected flash led and exit loop
+    digitalWrite(LED_PIN, HIGH);
+    delay(50);
+    digitalWrite(LED_PIN, LOW);
+    delay(50);
+    return;
+  }
+  */
   
   if (INPUT_MODE) {
-    // PWM Mode
+    // PWM mode
     static bool lastValA = HIGH;
     static bool lastValB = HIGH;
     
@@ -175,7 +189,7 @@ void loop() {
       haveUpdate = true;
     }
   } else {
-    // PPM Mode
+    // PPM mode
     static bool lastVal = HIGH;
     
     // Check if PPM pin has changed
@@ -231,6 +245,7 @@ void loop() {
     }
 
     if (!INPUT_MODE) {
+      // PWM mode
       // Write throttle channel to servo pin for weapon
       weapon.write(map(channels[2], -255, 255, 0, 180));
     }
