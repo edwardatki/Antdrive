@@ -15,7 +15,7 @@ https://github.com/stm32duino/BoardManagerFiles/raw/master/STM32/package_stm_ind
 
 #### Board settings
 In the tools menu make sure your board settings match this image
-![Board settings](https://github.com/edwardatki/Antdrive/blob/master/documentation/programming_settings.PNG)
+![Board settings](https://github.com/edwardatki/Antdrive/blob/master/documentation/programming_settings.png)
 
 #### Programming
 1. Connect and FTDI and select the appropriate COM port
