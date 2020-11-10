@@ -35,14 +35,19 @@ Servo weapon;
 #define CHANNELS 8
 static int channels[CHANNELS];
 
-void ppmInterrupt (bool val) {
+static int lastUpdate;
+static bool haveUpdate;
+
+void ppmInterrupt () {
   static char counter = 0;
-  static int startMicros = 0;
+  static unsigned long startMicros = 0;
+
+  bool val = digitalRead(PPM_PIN);
   
   if (val) {
     startMicros = micros();
   } else {
-    int duration = abs((int)micros() - startMicros);
+    int duration = micros() - startMicros;
     if (duration > PPM_MIN_SYNC) {
       counter = 0;
     } else {
@@ -50,27 +55,41 @@ void ppmInterrupt (bool val) {
       channels[counter] = map(duration, PPM_MIN_PULSE, PPM_MAX_PULSE, -255, 255);
       counter += 1;
     }
+
+    lastUpdate = millis();
+    haveUpdate = true;
   }
 }
 
-void pwmInterrupt (bool channel, bool val) {
-  static int startMicrosA = 0;
-  static int startMicrosB = 0;
+void pwmInterruptA () {
+  static unsigned long startMicros = 0;
 
-  if (channel == 0) {
-    if (val) {
-      startMicrosA = micros();
-    } else {
-      int duration = constrain(abs((int)micros() - startMicrosA), PWM_MIN_PULSE, PPM_MAX_PULSE);
-      channels[0] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
-    }
+  bool val = digitalRead(PPM_PIN);
+  
+  if (val) {
+    startMicros = micros();
   } else {
-    if (val) {
-      startMicrosB = micros();
-    } else {
-      int duration = constrain(abs((int)micros() - startMicrosB), PWM_MIN_PULSE, PPM_MAX_PULSE);
-      channels[1] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
-    }
+    int duration = constrain(micros() - startMicros, PWM_MIN_PULSE, PPM_MAX_PULSE);
+    channels[0] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
+
+    lastUpdate = millis();
+    haveUpdate = true;
+  }
+}
+
+void pwmInterruptB () {
+  static unsigned long startMicros = 0;
+  
+  bool val = digitalRead(SERVO_PIN);
+  
+  if (val) {
+    startMicros = micros();
+  } else {
+    int duration = constrain(micros() - startMicros, PWM_MIN_PULSE, PPM_MAX_PULSE);
+    channels[1] = map(duration, PWM_MIN_PULSE, PWM_MAX_PULSE, -255, 255);
+
+    lastUpdate = millis();
+    haveUpdate = true;
   }
 }
 
@@ -84,19 +103,19 @@ void setMotor (bool motor, int value) {
       analogWrite(MOT_1A_PIN, 255-abs(value));
       digitalWrite(MOT_1B_PIN, HIGH);
     } else {
-      analogWrite(MOT_1A_PIN, 0);
-      digitalWrite(MOT_1B_PIN, LOW);
+      analogWrite(MOT_1A_PIN, 255);
+      digitalWrite(MOT_1B_PIN, HIGH);
     }
   } else {
     if (value > 0+DEADZONE) {
       analogWrite(MOT_2A_PIN, abs(value));
       digitalWrite(MOT_2B_PIN, LOW);
     } else if (value < 0-DEADZONE) {
-      analogWrite(MOT_2A_PIN, 255-abs(255-value));
+      analogWrite(MOT_2A_PIN, 255-abs(value));
       digitalWrite(MOT_2B_PIN, HIGH);
     } else {
-      analogWrite(MOT_2A_PIN, 0);
-      digitalWrite(MOT_2B_PIN, LOW);
+      analogWrite(MOT_2A_PIN, 255);
+      digitalWrite(MOT_2B_PIN, HIGH);
     }
   }
 }
@@ -124,15 +143,6 @@ void setup() {
   INPUT_MODE = digitalRead(CFG1_PIN);
   MIXING = digitalRead(CFG2_PIN);
 
-  if (INPUT_MODE) {
-    // Enable servo pin as input if in PWM mode
-    pinMode(SERVO_PIN, INPUT_PULLUP);
-  } else {
-    // Attach weapon to pin and set to idle
-    weapon.attach(SERVO_PIN, 1000, 2000);
-    weapon.write(0);
-  }
-
   // Flash LED to indicate ready
   digitalWrite(LED_PIN, HIGH);
   delay(50);
@@ -142,14 +152,17 @@ void setup() {
   delay(50);
   digitalWrite(LED_PIN, LOW);
   delay(100);
-  
-  //attachInterrupt(PPM_PIN, pinChanged, CHANGE);
+
+  if (INPUT_MODE) {
+    pinMode(SERVO_PIN, INPUT_PULLUP);
+    attachInterrupt(PPM_PIN, pwmInterruptA, CHANGE);
+    attachInterrupt(SERVO_PIN, pwmInterruptB, CHANGE);
+  } else {
+    attachInterrupt(PPM_PIN, ppmInterrupt, CHANGE);
+  }
 }
 
 void loop() {
-  bool haveUpdate = false;
-  static int lastUpdate = 0;
-
   // Fault check disabled because it's always comes back positive
   // Driver still operates so the problem is between driver and microcontrollerU
   /*
@@ -163,91 +176,69 @@ void loop() {
     return;
   }
   */
-  
-  if (INPUT_MODE) {
-    // PWM mode
-    static bool lastValA = HIGH;
-    static bool lastValB = HIGH;
-    
-    // Check if PWM pin A has changed
-    bool newValA = digitalRead(PPM_PIN);
-    if (newValA != lastValA) {
-      // Update variables
-      pwmInterrupt(0, newValA);
-      lastUpdate = millis();
-      lastValA = newValA;
-      haveUpdate = true;
-    }
 
-    // Check if PWM pin B has changed
-    bool newValB = digitalRead(SERVO_PIN);
-    if (newValB != lastValB) {
-      // Update variables
-      pwmInterrupt(1, newValB);
-      lastUpdate = millis();
-      lastValB = newValB;
-      haveUpdate = true;
+  static bool signalReady = false;
+  if (!signalReady) {
+    static unsigned int readyCycles = 0;
+    if (haveUpdate) readyCycles += 1;
+    if (readyCycles > 500) {
+      if (!INPUT) {
+        // Attach weapon to pin and set to idle
+        weapon.attach(SERVO_PIN, 1000, 2000);
+        weapon.write(0);
+      }
+
+      signalReady = true;
     }
   } else {
-    // PPM mode
-    static bool lastVal = HIGH;
+    // Check if no signal for a while
+    if (abs((int)millis() - lastUpdate) > 200) {
+      // No signal so go to failsafe
+      
+      // Disable LED to indicate receiver disconnected
+      digitalWrite(LED_PIN, LOW);
     
-    // Check if PPM pin has changed
-    bool newVal = digitalRead(PPM_PIN);
-    if (newVal != lastVal) {
-      // Update variables
-      ppmInterrupt(newVal);
-      lastUpdate = millis();
-      lastVal = newVal;
-      haveUpdate = true;
-    }
-  }
-
-  // Check if no signal for a while
-  if (abs((int)millis() - lastUpdate) > 200) {
-    // No signal so go to failsafe
+      // Disable motor driver
+      digitalWrite(MOT_SLEEP_PIN, LOW);
     
-    // Disable LED to indicate receiver disconnected
-    digitalWrite(LED_PIN, LOW);
+      // Set motors to idle
+      setMotor(0, 0);
+      setMotor(1, 0);
   
-    // Disable motor driver
-    digitalWrite(MOT_SLEEP_PIN, LOW);
-  
-    // Set motors to idle
-    setMotor(0, 0);
-    setMotor(1, 0);
-
-    if (!INPUT_MODE) {
-      // Set weapon to ilde
-      weapon.write(0);
-    }
-  } else if (haveUpdate) {
-    // Still got signal so update motor and weapon outputs
+      if (!INPUT_MODE) {
+        // Set weapon to ilde
+        weapon.write(0);
+      }
+    } else if (haveUpdate) {
+      // Still got signal so update motor and weapon outputs
+      
+      // Enable LED to indicate receiver connected
+      digitalWrite(LED_PIN, HIGH);
     
-    // Enable LED to indicate receiver connected
-    digitalWrite(LED_PIN, HIGH);
+      // Enable motor driver
+      digitalWrite(MOT_SLEEP_PIN, HIGH);
+    
+      // Check if channel mixing is enabled
+      if (MIXING) {
+        // Mix channels
+        int mot1 = min(max(channels[1]-channels[0], -255), 255);
+        int mot2 = min(max(channels[1]+channels[0], -255), 255);
+        // Set motor speeds
+        setMotor(0, mot1);
+        setMotor(1, mot2);
+      } else {
+        // Set motor speeds
+        setMotor(0, channels[0]);
+        setMotor(1, channels[1]);
+      }
   
-    // Enable motor driver
-    digitalWrite(MOT_SLEEP_PIN, HIGH);
-  
-    // Check if channel mixing is enabled
-    if (MIXING) {
-      // Mix channels
-      int mot1 = min(max(channels[1]-channels[0], -255), 255);
-      int mot2 = min(max(channels[1]+channels[0], -255), 255);
-      // Set motor speeds
-      setMotor(0, mot1);
-      setMotor(1, mot2);
-    } else {
-      // Set motor speeds
-      setMotor(0, channels[0]);
-      setMotor(1, channels[1]);
-    }
+      if (!INPUT_MODE) {
+        // PWM mode
+        // Write throttle channel to servo pin for weapon
+        weapon.write(map(channels[2], -255, 255, 0, 180));
+      }
 
-    if (!INPUT_MODE) {
-      // PWM mode
-      // Write throttle channel to servo pin for weapon
-      weapon.write(map(channels[2], -255, 255, 0, 180));
+      haveUpdate = false;
     }
   }
 }
